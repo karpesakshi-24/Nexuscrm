@@ -22,7 +22,10 @@ const navItems = [
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]
 
-export default function Sidebar() {
+// Bottom nav shows only first 5 items on mobile
+const mobileNavItems = navItems.slice(0, 5)
+
+export default function Sidebar({ mobile = false }) {
   const { user, logout, refreshToken } = useAuthStore()
   const navigate = useNavigate()
   const [loggingOut, setLoggingOut] = useState(false)
@@ -44,6 +47,104 @@ export default function Sidebar() {
     toast.success('Logged out')
   }
 
+  // ── Mobile Bottom Navigation Bar ──
+  if (mobile) {
+    return (
+      <nav
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '64px',
+          background: 'var(--bg-surface)',
+          borderTop: '1px solid var(--border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          zIndex: 50,
+          paddingBottom: 'env(safe-area-inset-bottom)',
+        }}
+      >
+        {mobileNavItems.map(({ to, icon: Icon, label, badge }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={to === '/'}
+            style={({ isActive }) => ({
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '2px',
+              padding: '6px 12px',
+              borderRadius: '12px',
+              color: isActive ? '#c341f0' : 'var(--text-muted)',
+              textDecoration: 'none',
+              position: 'relative',
+              transition: 'color 0.2s',
+            })}
+          >
+            {({ isActive }) => (
+              <>
+                <div style={{ position: 'relative' }}>
+                  <Icon size={20} />
+                  {badge && unread > 0 && (
+                    <span style={{
+                      position: 'absolute',
+                      top: '-4px',
+                      right: '-4px',
+                      background: '#c341f0',
+                      color: 'white',
+                      fontSize: '9px',
+                      fontWeight: '700',
+                      borderRadius: '999px',
+                      minWidth: '14px',
+                      height: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '0 3px',
+                    }}>
+                      {unread > 99 ? '99+' : unread}
+                    </span>
+                  )}
+                </div>
+                <span style={{
+                  fontSize: '10px',
+                  fontWeight: isActive ? '600' : '400',
+                }}>
+                  {label}
+                </span>
+              </>
+            )}
+          </NavLink>
+        ))}
+
+        {/* More button — logout on mobile */}
+        <button
+          onClick={handleLogout}
+          disabled={loggingOut}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '2px',
+            padding: '6px 12px',
+            borderRadius: '12px',
+            color: 'var(--text-muted)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          <LogOut size={20} />
+          <span style={{ fontSize: '10px' }}>Logout</span>
+        </button>
+      </nav>
+    )
+  }
+
+  // ── Desktop Sidebar ──
   return (
     <aside
       className="flex flex-col w-60 min-h-screen flex-shrink-0"
