@@ -6,6 +6,9 @@ nexuscrm-complete/
 └── frontend/  → React + Vite frontend (new)
 ```
 
+## 🚀 Live Demo  
+🔗 [Click here to view the project](https://nexuscrm-production.up.railway.app/)
+
 ## Quick Start
 
 ### Backend (Django)
